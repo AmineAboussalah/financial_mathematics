@@ -3,17 +3,40 @@ import numpy as np
 class StockOnePeriod:
     """
     In this class, we only consider (at the moment) European call option.
+
+    Parameters:
+    - s: initial value of the stock
+    - u, d: (upward factor, downward factor) possible values at time t=1
+    - p: probability that the upward factor is activated
+
+    Attributes:
+    - initial_value: initial value of the stock at time t = 0
+    - final_value: possible values of the stock at time t = 1
+    - k: strike price of the option (is defined)
+    - derivative: payoffs at time t = 1 (with respect to k)
     """
-    def __init__(self, s, u, d, p, k):
+    def __init__(self, s, u, d, p):
+        """
+        Set the parameters s, u, p, d and compute the initial and final values.
+        """
+        # Define the binomial model
+        self.u = float(u)
+        self.d = float(d)
+        self.p = float(p)
+
+        # Compute initial and final values
         self.initial_value = float(s)
-        self.strike_price = float(k)
-        self.upward = float(u)
-        self.downward = float(d)
-        self.probability = float(p)
+        self.final_value = np.asarray([self.u * self.initial_value, \
+                                   self.d * self.initial_value])
 
-        self.final_value = np.asarray([self.upward * self.initial_value, \
-                                   self.downward * self.initial_value])
-
-    def compute_derivative(self):
-        self.derivative = np.maximum(self.final_value-self.strike_price, 0)
+    def compute_derivative(self, k):
+        """
+        The derivative is the difference between the possible values of the stock
+        at time t = 1 and the strike price.
+        Careful: Valid only for European call option
+        """
+        # Define the strike price at which the option exercices
+        self.k = k
+        # Compute the derivative
+        self.derivative = np.maximum(self.final_value-self.k, 0)
         return(self.derivative)
