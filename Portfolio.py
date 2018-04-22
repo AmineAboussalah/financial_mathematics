@@ -1,5 +1,5 @@
-from financial_mathematics.Bond import BondOnePeriod
-from financial_mathematics.Stock import StockOnePeriod
+from Bond import BondOnePeriod
+from Stock import StockOnePeriod
 
 import numpy as np
 
