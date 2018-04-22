@@ -47,24 +47,24 @@ class Portfolio:
         self.initial_value = self.x * self.bond.initial_value + self.y * self.stock.initial_value
         self.final_value = self.x * self.bond.final_value + self.y * self.stock.final_value
 
-    def is_replicating(self):
+    def is_replicating(self, k):
         """
         Based on the stock, the bond, x and y, this method checks whether the portfolio replicates
         the claim X. The portfolio does if its final value is equal to the derivative of the stock.
         """
-        if(np.all(self.final_value == self.stock.compute_derivative())):
+        if(np.all(self.final_value == self.stock.compute_derivative(k))):
             self.replicating = True
         else:
             self.replicating = False
         return(self.replicating)
 
-    def price_option(self):
+    def price_option(self, k):
         """
         If the portfolio replicates the claim X, a proposition indicates that the price of the option
         can be computed as discounted expectations of future payoffs.
         Careful: we should use the martingale probabilities Q, rather than objective probabilities P.
         """
-        if(self.is_replicating()):
+        if(self.is_replicating(k)):
             q = ((1+self.bond.r)-self.stock.d)/(self.stock.u-self.stock.d)
             price_option = (1/(1+self.bond.r))*(q*self.stock.derivative[0] + (1-q)*self.stock.derivative[1])
 
