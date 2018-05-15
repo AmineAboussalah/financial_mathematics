@@ -58,12 +58,13 @@ class StockMultiPeriod:
     """
     def __init__(self, s, u, d, p, T):
         """
-        Set the parameters s, u, p, d and compute the initial and final values.
+        Set the parameters s, u, p,  d and compute the initial and final values.
         """
         # Define the binomial model
         self.u = float(u)
         self.d = float(d)
         self.p = float(p)
+        self.T = T
 
         # Compute initial and final values
         self.values = [None]*T
