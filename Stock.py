@@ -123,7 +123,7 @@ class StockMultiPeriod:
                 x[i][j] = (1/(1+r))*((self.u*self.prices[i+1][j+1] - self.d*self.prices[i+1][j])/(self.u-self.d))
 
         # Rounding numbers
-        x = np.around(x.astype(np.double),3)
-        y = np.around(y.astype(np.double),3)
+        #x = np.around(x.astype(np.double),3)
+        #y = np.around(y.astype(np.double),3)
 
         return(x, y)
