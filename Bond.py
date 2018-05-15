@@ -36,7 +36,7 @@ class BondMultiPeriod:
         self.T = T
         self.values = [None]*T
 
-        self.values[0] = 1
+        self.values[0] = 1.
 
         for i in range(1, T):
-            self.values[i] = self.values[i-1]*(1+self.r)
+            self.values[i] = np.round(self.values[i-1]*(1+self.r), 2)
