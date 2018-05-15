@@ -86,25 +86,28 @@ class StockMultiPeriod:
         self.derivative = np.maximum(self.values[self.T]-self.k, 0)
         return(self.derivative)
 
-    def backward_computation(self, k, r):
+    def price_option(self, k, r):
         """
         The objective is to price the option at time t = 0. To do so, we use the
         risk neutral valuation that we compute one step at a time (with the martingales!).
         """
-        # Compute q
+        # Compute q => martingales
         q = ((1+r)-self.d)/(self.u-self.d)
 
-        # Allocate the pricing steps and set the last one
-        self.pricing = [None]*(self.T+1)
-        self.pricing[self.T] = self.compute_derivative(k)
+        # Allocate the prices steps and set the last one
+        self.prices = [None]*(self.T+1)
+        self.prices[self.T] = self.compute_derivative(k)
 
-        # Compute backward
+        # Backward steps to price the option
         for i in reversed(range(1, self.T+1)):
-            self.pricing[i-1] = np.zeros(i)
+            self.prices[i-1] = np.zeros(i)
             for j in range(0, i):
-                self.pricing[i-1][j] = (1/(1+r))*(np.mean(self.pricing[i][j: j+2]))
+                self.prices[i-1][j] = (1/(1+r))*(np.mean(self.prices[i][j: j+2]))
 
     def compute_portfolio(self, r):
+        """
+        Careful: This function requires that backward_computation be executed (prices attribute)
+        """
         x = [None]*(self.T)
         y = [None]*(self.T)
 
@@ -113,10 +116,13 @@ class StockMultiPeriod:
             y[i] = np.zeros(i+1)
             for j in range(0, i+1):
                 if i==0:
-                    y[i][j] = (1/float(self.values[i]))*((self.pricing[i+1][j] - self.pricing[i+1][j+1])/(self.u-self.d))
+                    y[i][j] = (1/float(self.values[i]))*((self.prices[i+1][j] - self.prices[i+1][j+1])/(self.u-self.d))
                 else:
-                    y[i][j] = (1/self.values[i][j])*((self.pricing[i+1][j] - self.pricing[i+1][j+1])/(self.u-self.d))
+                    y[i][j] = (1/self.values[i][j])*((self.prices[i+1][j] - self.prices[i+1][j+1])/(self.u-self.d))
 
-                x[i][j] = (1/(1+r))*((self.u*self.pricing[i+1][j+1] - self.d*self.pricing[i+1][j])/(self.u-self.d))
+                x[i][j] = (1/(1+r))*((self.u*self.prices[i+1][j+1] - self.d*self.prices[i+1][j])/(self.u-self.d))
+
+        x = np.round(x, 2)
+        y = np.round(y, 2)
 
         return(x, y)
